@@ -105,17 +105,16 @@ class Seq2SeqAttentionDecoder(AttentionDecoder):
         self.dense = nn.Dense(vocab_size, flatten=False)
 
     def init_state(self, enc_outputs, enc_valid_lens, *args):
-        # outputs的形状为(num_steps，batch_size，num_hiddens)
-        # hidden_state[0]的形状为(num_layers，batch_size，num_hiddens)
+        # outputs的形状为(num_steps, batch_size, num_hiddens)
+        # hidden_state[0]的形状为(num_layer, batch_size, num_hiddens)
         outputs, hidden_state = enc_outputs
         return (outputs.swapaxes(0, 1), hidden_state, enc_valid_lens)
 
     def forward(self, X, state):
-        # enc_outputs的形状为(batch_size,num_steps,num_hiddens).
-        # hidden_state[0]的形状为(num_layers,batch_size,
-        # num_hiddens)
+        # enc_outputs的形状为(batch_size, num_steps, num_hiddens).
+        # hidden_state[0]的形状为(num_layers, batch_size, num_hiddens)
         enc_outputs, hidden_state, enc_valid_lens = state
-        # 输出X的形状为(num_steps,batch_size,embed_size)
+        # 输出X的形状为(num_steps, batch_size, embed_size)
         X = self.embedding(X).swapaxes(0, 1)
         outputs, self._attention_weights = [], []
         for x in X:
